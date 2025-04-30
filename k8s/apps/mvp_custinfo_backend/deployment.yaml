@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  mvp-custinfo
+  namespace: default
+  labels:
+    app:  mvp-custinfo
+spec:
+  selector:
+    matchLabels:
+      app: mvp-custinfo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  mvp-custinfo
+    spec:
+      imagePullSecrets:
+        - name: acrsecret
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name:  mvp-custinfo
+        image:  acrteam03.azurecr.io/mvp_custinfo:97dd6cecab2d11187096481637ed13f0af948458
+
+        # resources:
+        #   requests:
+        #     cpu: 100m
+        #     memory: 100Mi
+        #   limits:
+        #     cpu: 100m
+        #     memory: 100Mi
+        # livenessProbe:
+        #   tcpSocket:
+        #     port: 80
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        #   periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /_status/healthz
+        #     port: 80
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 2
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        #   periodSeconds: 10
+
+        env:
+        - name: EVENTHUB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mvp-configmap
+              key: EVENTHUB_HOST
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mvp-configmap
+              key: REDIS_HOST
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: mvp-configmap
+              key: REDIS_PORT
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mvp-configmap
+              key: DB_URL
+
+        - name: EVENTHUB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mvp-secret
+              key: KAFKA_CONNECTION_STRING
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mvp-secret
+              key: REDIS_PASSWORD
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mvp-secret
+              key: DB_USERNAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mvp-secret
+              key: DB_PASSWORD
+        ports:
+        - containerPort: 8080
+          name:  mvp-custinfo
+        # volumeMounts:
+        # - name: localtime
+        #   mountPath: /etc/localtime
+      # volumes:
+      #   - name: localtime
+      #     hostPath:
+      #       path: /usr/share/zoneinfo/Asia/Shanghai
+      restartPolicy: Always

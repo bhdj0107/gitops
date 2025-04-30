@@ -1,0 +1,19 @@
+# apps/mvp-frontend.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mvp-frontend
+  namespace: default
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/kt-ktk-03/GitOps.git
+    targetRevision: main
+    path: k8s/apps/mvp_frontend
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

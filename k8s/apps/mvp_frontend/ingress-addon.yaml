@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    appgw.ingress.kubernetes.io/ssl-redirect: "false"
+    appgw.ingress.kubernetes.io/use-private-ip: "false"
+  name: mvp-frontend-ingress-addon
+  namespace: default
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - host: mvc.20.249.192.200.nip.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: mvp-frontend
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

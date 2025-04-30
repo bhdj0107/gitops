@@ -1,0 +1,19 @@
+# apps/mvp-ppon-pub-backend.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mvp-ppon-pub-backend
+  namespace: default
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/kt-ktk-03/GitOps.git
+    targetRevision: main
+    path: k8s/apps/mvp_ppon_pub_backend
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

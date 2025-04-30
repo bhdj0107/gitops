@@ -1,0 +1,21 @@
+# Root App: App of Apps
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mvp-app
+  namespace: default
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/kt-ktk-03/GitOps.git
+    targetRevision: main  # 또는 원하는 브랜치
+    path: k8s/apps  # 하위 앱들의 YAML이 있는 경로
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
